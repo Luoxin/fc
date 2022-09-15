@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package nozomi;
+
+option go_package = "base/nozomi";
+
+service nozomi {
+	rpc Notify (NotifyReq) returns (NotifyRsp) {
+	};
+}
+
+message NotifyReq {
+
+}
+
+message NotifyRsp {
+
+}

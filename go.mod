@@ -7,6 +7,7 @@ require (
 	github.com/darabuchi/log v0.0.0-20220726104220-e8c4cdea8d19
 	github.com/darabuchi/utils v0.0.0-20220803023729-d2425c98cf94
 	github.com/fasthttp/router v1.4.12
+	github.com/golang/protobuf v1.5.2
 	github.com/valyala/fasthttp v1.40.0
 )
 
@@ -26,7 +27,6 @@ require (
 	github.com/petermattis/goid v0.0.0-20220824145935-af5520614cb6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/savsgio/gotils v0.0.0-20220530130905-52f3993e8d6d // indirect
-	github.com/stretchr/testify v1.8.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
@@ -36,5 +36,6 @@ require (
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90 // indirect
 	golang.org/x/sys v0.0.0-20220913175220-63ea55921009 // indirect
 	golang.org/x/text v0.3.7 // indirect
+	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
