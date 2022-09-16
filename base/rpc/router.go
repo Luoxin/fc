@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strconv"
 
+	"github.com/Luoxin/fc/base/ext"
 	"github.com/bytedance/sonic"
 	"github.com/darabuchi/log"
 	"github.com/darabuchi/utils"
@@ -137,7 +138,7 @@ func RegisterHandler(method Method, path string, handler any) {
 
 		resp, err := func() (any, *Error) {
 			obj := reflect.New(h.req)
-			if _, ok := obj.Interface().(*ExtReq); !ok {
+			if _, ok := obj.Interface().(*ext.ExtReq); !ok {
 				if len(ctx.PostBody()) > 0 {
 					err := sonic.Unmarshal(ctx.PostBody(), obj.Interface())
 					if err != nil {
@@ -175,12 +176,13 @@ func RegisterHandler(method Method, path string, handler any) {
 			return ret[0].Interface(), nil
 		}()
 		if err != nil {
+			log.Errorf("err:%v", err)
 			_, err := ctx.Write(err.Marshal())
 			if err != nil {
 				log.Errorf("err:%v", err)
 			}
 		} else {
-			if ext, ok := resp.(*ExtRsp); ok {
+			if ext, ok := resp.(*ext.ExtRsp); ok {
 				_, err := ctx.Write(ext.Buf)
 				if err != nil {
 					log.Errorf("err:%v", err)
