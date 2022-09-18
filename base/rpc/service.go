@@ -55,3 +55,8 @@ func Listen(addr string) error {
 
 	return nil
 }
+
+func StartService() error {
+
+	return nil
+}
