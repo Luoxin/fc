@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Luoxin/fc/base/ext"
+	"github.com/Luoxin/sexy/base/ext"
 	"github.com/darabuchi/log"
 )
 

@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/Luoxin/fc/base/ext"
+	"github.com/Luoxin/sexy/base/ext"
 	"github.com/bytedance/sonic"
 	"github.com/darabuchi/log"
 	"github.com/darabuchi/utils"
