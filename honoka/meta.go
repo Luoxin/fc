@@ -10,9 +10,13 @@ import (
 )
 
 type meta struct {
+	EtcdAddrList []string `json:"etcd_addr_list,omitempty" yaml:"etcd_addr_list,omitempty" toml:"etcd_addr_list,omitempty"`
 }
 
-var _meta = meta{}
+var (
+	_meta       = meta{}
+	ServiceName string
+)
 
 func LoadMeta() error {
 	path := filepath.Join(utils.GetUserConfigDir(), "sexy", "meta.yaml")
