@@ -14,7 +14,7 @@ func LoadConfig() error {
 	viper.AddConfigPath(utils.GetExecPath())
 	viper.AddConfigPath(utils.GetPwd())
 
-	err := viper.ReadRemoteConfig()
+	err := viper.ReadInConfig()
 	if err != nil {
 		switch e := err.(type) {
 		case viper.ConfigFileNotFoundError:

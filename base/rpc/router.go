@@ -83,8 +83,20 @@ func NewHandler(handler any) *Handler {
 	return h
 }
 
-func RegisterHandler(method Method, path string, handler any) {
-	h := NewHandler(handler)
+type ApiHandler struct {
+	Method  Method
+	Path    string
+	Handler any
+}
+
+func RegisterHandlers(apis ...ApiHandler) {
+	for _, api := range apis {
+		RegisterHandler(api)
+	}
+}
+
+func RegisterHandler(api ApiHandler) {
+	h := NewHandler(api.Handler)
 
 	logic := func(ctx *fasthttp.RequestCtx) {
 		log.SetTrace(log.GenTraceId())
@@ -182,8 +194,8 @@ func RegisterHandler(method Method, path string, handler any) {
 				log.Errorf("err:%v", err)
 			}
 		} else {
-			if ext, ok := resp.(*ext.ExtRsp); ok {
-				_, err := ctx.Write(ext.Buf)
+			if extRsp, ok := resp.(*ext.ExtRsp); ok {
+				_, err := ctx.Write(extRsp.Buf)
 				if err != nil {
 					log.Errorf("err:%v", err)
 				}
@@ -204,34 +216,34 @@ func RegisterHandler(method Method, path string, handler any) {
 		}
 	}
 
-	switch method {
+	switch api.Method {
 	case GET:
-		handlerRouter.Handle(fasthttp.MethodGet, path, logic)
+		handlerRouter.Handle(fasthttp.MethodGet, api.Path, logic)
 	case HEAD:
-		handlerRouter.Handle(fasthttp.MethodHead, path, logic)
+		handlerRouter.Handle(fasthttp.MethodHead, api.Path, logic)
 	case POST:
-		handlerRouter.Handle(fasthttp.MethodPost, path, logic)
+		handlerRouter.Handle(fasthttp.MethodPost, api.Path, logic)
 	case PUT:
-		handlerRouter.Handle(fasthttp.MethodPut, path, logic)
+		handlerRouter.Handle(fasthttp.MethodPut, api.Path, logic)
 	case PATCH:
-		handlerRouter.Handle(fasthttp.MethodPatch, path, logic)
+		handlerRouter.Handle(fasthttp.MethodPatch, api.Path, logic)
 	case DELETE:
-		handlerRouter.Handle(fasthttp.MethodDelete, path, logic)
+		handlerRouter.Handle(fasthttp.MethodDelete, api.Path, logic)
 	case CONNECT:
-		handlerRouter.Handle(fasthttp.MethodConnect, path, logic)
+		handlerRouter.Handle(fasthttp.MethodConnect, api.Path, logic)
 	case OPTIONS:
-		handlerRouter.Handle(fasthttp.MethodOptions, path, logic)
+		handlerRouter.Handle(fasthttp.MethodOptions, api.Path, logic)
 	case TRACE:
-		handlerRouter.Handle(fasthttp.MethodTrace, path, logic)
+		handlerRouter.Handle(fasthttp.MethodTrace, api.Path, logic)
 	case All:
-		handlerRouter.Handle(fasthttp.MethodGet, path, logic)
-		handlerRouter.Handle(fasthttp.MethodHead, path, logic)
-		handlerRouter.Handle(fasthttp.MethodPost, path, logic)
-		handlerRouter.Handle(fasthttp.MethodPut, path, logic)
-		handlerRouter.Handle(fasthttp.MethodPatch, path, logic)
-		handlerRouter.Handle(fasthttp.MethodDelete, path, logic)
-		handlerRouter.Handle(fasthttp.MethodConnect, path, logic)
-		handlerRouter.Handle(fasthttp.MethodOptions, path, logic)
-		handlerRouter.Handle(fasthttp.MethodTrace, path, logic)
+		handlerRouter.Handle(fasthttp.MethodGet, api.Path, logic)
+		handlerRouter.Handle(fasthttp.MethodHead, api.Path, logic)
+		handlerRouter.Handle(fasthttp.MethodPost, api.Path, logic)
+		handlerRouter.Handle(fasthttp.MethodPut, api.Path, logic)
+		handlerRouter.Handle(fasthttp.MethodPatch, api.Path, logic)
+		handlerRouter.Handle(fasthttp.MethodDelete, api.Path, logic)
+		handlerRouter.Handle(fasthttp.MethodConnect, api.Path, logic)
+		handlerRouter.Handle(fasthttp.MethodOptions, api.Path, logic)
+		handlerRouter.Handle(fasthttp.MethodTrace, api.Path, logic)
 	}
 }

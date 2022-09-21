@@ -5,7 +5,6 @@ import (
 
 	"github.com/darabuchi/log"
 	"github.com/darabuchi/utils"
-	"github.com/mcuadros/go-defaults"
 	"gopkg.in/yaml.v3"
 )
 
@@ -13,13 +12,21 @@ type meta struct {
 	EtcdAddrList []string `json:"etcd_addr_list,omitempty" yaml:"etcd_addr_list,omitempty" toml:"etcd_addr_list,omitempty"`
 }
 
+func (p *meta) Defaults() {
+	if len(p.EtcdAddrList) == 0 {
+		p.EtcdAddrList = append(p.EtcdAddrList, "http://127.0.0.1:2379")
+	}
+}
+
 var (
-	_meta       = meta{}
+	_meta = &meta{}
+
 	ServiceName string
+	BindIp      string
 )
 
 func LoadMeta() error {
-	path := filepath.Join(utils.GetUserConfigDir(), "sexy", "meta.yaml")
+	path := filepath.Join(utils.GetUserConfigDir(), "honoka", "meta.yaml")
 
 	if utils.IsFile(path) {
 		content, err := utils.FileRead(path)
@@ -36,12 +43,13 @@ func LoadMeta() error {
 
 	} else {
 		log.Warnf("not found meta, use default")
-		defaults.SetDefaults(_meta)
 	}
+
+	_meta.Defaults()
 
 	return nil
 }
 
 func Meta() meta {
-	return _meta
+	return *_meta
 }

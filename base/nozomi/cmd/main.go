@@ -1,13 +1,16 @@
 package main
 
 import (
-	"time"
-
-	"github.com/Luoxin/sexy/base/ext"
+	"github.com/Luoxin/sexy/base/nozomi"
+	"github.com/Luoxin/sexy/base/nozomi/impl"
 	"github.com/Luoxin/sexy/base/rpc"
 	"github.com/Luoxin/sexy/honoka"
 	"github.com/darabuchi/log"
 )
+
+func init() {
+	honoka.ServiceName = nozomi.ServiceName
+}
 
 func main() {
 	err := honoka.Load()
@@ -16,15 +19,13 @@ func main() {
 		return
 	}
 
-	rpc.RegisterHandler(rpc.All, "", func(ctx *rpc.Ctx, req *ext.ExtReq) (*ext.ExtRsp, error) {
-		var rsp ext.ExtRsp
+	rpc.RegisterHandlers(apiList...)
 
-		log.Info("log")
-
-		rsp.Buf = []byte(time.Now().String())
-
-		return &rsp, nil
-	})
+	err = impl.InitState()
+	if err != nil {
+		log.Errorf("err:%v", err)
+		return
+	}
 
 	err = rpc.StartService()
 	if err != nil {
