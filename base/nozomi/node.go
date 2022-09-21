@@ -54,7 +54,7 @@ func RegisterServer(node *Node) error {
 			if err != nil {
 				if err != etcd.ErrNotFound {
 					log.Errorf("err:%v", err)
-					return err
+					continue
 				}
 			}
 
@@ -69,7 +69,7 @@ func RegisterServer(node *Node) error {
 			err = etcd.Set(key, service)
 			if err != nil {
 				log.Errorf("err:%v", err)
-				return err
+				continue
 			}
 
 			return nil
