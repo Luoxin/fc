@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ext;
 
-option go_package = "base/ext";
+option go_package = "us/ext";
 
 message ExtReq {
 
