@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/Luoxin/sexy/honoka"
@@ -162,24 +163,59 @@ func addWatch(name string) error {
 				case event := <-serviceWatcher.Events:
 					switch event.Op {
 					case fsnotify.Create, fsnotify.Write:
-					case fsnotify.Remove:
-
+						updateServer(strings.TrimSuffix(filepath.Base(event.Name), ".json"))
+					case fsnotify.Remove, fsnotify.Rename:
+						removeService(strings.TrimSuffix(filepath.Base(event.Name), ".json"))
 					}
 				case err := <-serviceWatcher.Errors:
 					log.Errorf("service watcher error:%s", err)
 				}
 			}
 		}(utils.GetExitSign())
-
 	}
 
-	serviceWatcher.Add(name)
+	log.Infof("watch %s", name)
+	serviceWatcher.Add(GenServerPath(name))
 
 	return nil
 }
 
 func GenServerPath(serviceName string) string {
 	return filepath.Join(utils.GetUserConfigDir(), "honoka", "nozomi", serviceName+".json")
+}
+
+func updateServer(name string) (*Server, error) {
+	log.Infof("update service %s", name)
+
+	cf := GenServerPath(name)
+
+	if !utils.IsFile(cf) {
+		removeService(name)
+		return nil, ErrorServerNotFound
+	}
+
+	cfb, err := utils.FileRead(cf)
+	if err != nil {
+		log.Errorf("err:%v", err)
+		return nil, err
+	}
+
+	var service Server
+	err = sonic.Unmarshal(cfb, &service)
+	if err != nil {
+		log.Errorf("err:%v", err)
+		return nil, err
+	}
+
+	serverMap.Store(name, &service)
+
+	return &service, nil
+}
+
+func removeService(name string) {
+	log.Infof("remove service %s", name)
+
+	serverMap.Delete(name)
 }
 
 func loadServer(name string) (*Server, error) {
@@ -196,27 +232,19 @@ func loadServer(name string) (*Server, error) {
 		return val.(*Server), nil
 	}
 
-	cf := GenServerPath(name)
-	err := addWatch(cf)
+	err := addWatch(name)
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return nil, err
 	}
 
-	if !utils.IsFile(cf) {
-		return nil, ErrorServerNotFound
-	}
-
-	var service Server
-	err = sonic.Unmarshal([]byte(cf), &service)
+	service, err := updateServer(name)
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return nil, err
 	}
 
-	serverMap.Store(name, &service)
-
-	return &service, nil
+	return service, nil
 }
 
 func GetService(name string) (*Server, error) {

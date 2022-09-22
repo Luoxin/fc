@@ -12,6 +12,8 @@ import (
 )
 
 func ServiceSync() error {
+	nozomi.GetService(nozomi.ServiceName)
+
 	etcd.WatchPrefix("nozomi_server_cfg_", func(event etcd.Event) {
 		var service nozomi.Server
 		err := sonic.Unmarshal([]byte(event.Value), &service)
@@ -23,8 +25,6 @@ func ServiceSync() error {
 		if service.Name == "" {
 			return
 		}
-
-		log.Info(string(event.Value))
 
 		cf := nozomi.GenServerPath(service.Name)
 

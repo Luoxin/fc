@@ -1,6 +1,8 @@
 package rpc
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/Luoxin/sexy/base/ext"
@@ -92,6 +94,6 @@ func call(method, uri string, timeout time.Duration, req, rsp interface{}) error
 	return nil
 }
 
-func Call(serviceName string, path string, req, rsp interface{}) error {
-	return call(fasthttp.MethodPost, "http://127.0.0.1:8080"+path, time.Second*5, req, rsp)
+func CallWithAddr(serviceName string, addr string, path string, req, rsp interface{}) error {
+	return call(fasthttp.MethodPost, fmt.Sprintf("%s/%s", strings.TrimSuffix(addr, "/"), strings.TrimPrefix(path, "/")), time.Second*5, req, rsp)
 }

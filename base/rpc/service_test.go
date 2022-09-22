@@ -56,7 +56,7 @@ func TestListen(t *testing.T) {
 		time.Sleep(time.Second * 3)
 		{
 			var rsp HiRsp
-			err := Call("", "/hi", &HiReq{
+			err := CallWithAddr("", "http://127.0.0.1:8080", "/hi", &HiReq{
 				Hi: "hi",
 			}, &rsp)
 			if err != nil {
@@ -68,7 +68,7 @@ func TestListen(t *testing.T) {
 
 		{
 			var rsp ext.ExtRsp
-			err := Call("", "/", &ext.ExtReq{}, &rsp)
+			err := CallWithAddr("", "http://127.0.0.1:8080", "/", &ext.ExtReq{}, &rsp)
 			if err != nil {
 				log.Errorf("err:%v", err)
 				return
@@ -78,7 +78,7 @@ func TestListen(t *testing.T) {
 
 		{
 			var rsp ext.ExtRsp
-			err := Call("", "/p1/p2/p3/p4", &ext.ExtReq{}, &rsp)
+			err := CallWithAddr("", "http://127.0.0.1:8080", "/p1/p2/p3/p4", &ext.ExtReq{}, &rsp)
 			if err != nil {
 				log.Errorf("err:%v", err)
 				return

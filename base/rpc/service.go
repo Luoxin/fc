@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/Luoxin/sexy/base/ext"
 	"github.com/Luoxin/sexy/base/nozomi"
 	"github.com/Luoxin/sexy/honoka"
 	"github.com/darabuchi/log"
@@ -70,6 +71,14 @@ func StartService() (err error) {
 		log.Errorf("err:%v", err)
 		return err
 	}
+
+	// 添加系统级的接口
+	RegisterHandler(ApiHandler{Method: HEAD, Path: "_sys_/Echo", Handler: func(ctx *Ctx, req *ext.ExtReq) (*ext.ExtRsp, error) {
+		var rsp ext.ExtRsp
+		return &rsp, nil
+	}})
+
+	// 监听端口，注册服务
 
 	addr := fmt.Sprintf("%s:%d", honoka.BindIp, honoka.ConfigGet(honoka.ListenPort))
 	node := &nozomi.Node{

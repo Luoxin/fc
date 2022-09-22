@@ -138,7 +138,6 @@ func RegisterHandler(api ApiHandler) {
 				b.WriteString("resp:")
 				b.WriteString(utils.ShortStr4Web(strconv.Quote(string(ctx.Response.Body())), 1024*1024))
 				b.WriteString(" ")
-
 			}
 
 			b.WriteString("status:")
@@ -246,4 +245,5 @@ func RegisterHandler(api ApiHandler) {
 		handlerRouter.Handle(fasthttp.MethodOptions, api.Path, logic)
 		handlerRouter.Handle(fasthttp.MethodTrace, api.Path, logic)
 	}
+	handlerRouter.Handle(fasthttp.MethodHead, api.Path, logic)
 }
