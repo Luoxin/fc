@@ -6,81 +6,88 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
-
+	
 	"github.com/darabuchi/log"
 	"github.com/darabuchi/utils"
 	"github.com/elliotchance/pie/v2"
 	"github.com/emicklei/proto"
 )
 
-// var protoMap =
+const (
+	BaseModPath = "github.com/Luoxin/sexy"
+	BaseDomain  = "github.com"
+)
+
+var protoMap = map[string]*Proto{}
 
 type (
 	Proto struct {
-		MessageMap map[string]*ProtoMessage
-		EnumMap    map[string]*ProtoEnum
-		Package    *ProtoPackage
-		Service    *ProtoService
+		MessageMap     map[string]*ProtoMessage
+		EnumMap        map[string]*ProtoEnum
+		Package        *ProtoPackage
+		Service        *ProtoService
+		GoPackagePath  string
+		PackageDirPath string
 	}
-
+	
 	ProtoMessage struct {
 		source *proto.Message
-
+		
 		Name string
-
+		
 		FieldMap map[string]*ProtoFiled
 		Comment  *ProtoCommentTag
 	}
-
+	
 	ProtoFiled struct {
 		source proto.Visitee
-
+		
 		Name    string
 		typ     ProtoFiledType
 		Comment *ProtoCommentTag
 	}
-
+	
 	ProtoFiledType uint8
-
+	
 	ProtoCommentTag struct {
 		comment *proto.Comment
 		TagMap  map[string][]string
 	}
-
+	
 	ProtoEnum struct {
 		source   *proto.Enum
 		Name     string
 		Comment  *ProtoCommentTag
 		FieldMap map[string]*ProtoEnumField
 	}
-
+	
 	ProtoEnumField struct {
 		source *proto.EnumField
 		Name   string
 		Value  int
-
+		
 		// 写在上面的注释
 		Comment *ProtoCommentTag
-
+		
 		// 写在同行的注释
 		InlineComment *ProtoCommentTag
 	}
-
+	
 	ProtoPackage struct {
 		source *proto.Package
-
+		
 		Name          string
 		Comment       *ProtoCommentTag
 		InlineComment *ProtoCommentTag
 	}
-
+	
 	ProtoService struct {
 		source  *proto.Service
 		Name    string
 		Comment *ProtoCommentTag
 		RpcMap  map[string]*ProtoRPC
 	}
-
+	
 	ProtoRPC struct {
 		source       *proto.RPC
 		Comment      *ProtoCommentTag
@@ -89,11 +96,47 @@ type (
 	}
 )
 
-func NewProto() *Proto {
-	return &Proto{
+func ParseProto(name string) (*Proto, error) {
+	p := protoMap[name]
+	if p != nil {
+		return p, nil
+	}
+	
+	p = &Proto{
 		MessageMap: map[string]*ProtoMessage{},
 		EnumMap:    map[string]*ProtoEnum{},
 	}
+	
+	protoBuf, err := utils.FileRead(filepath.Join(ProtoDir(), name+".proto"))
+	if err != nil {
+		log.Errorf("err:%v", err)
+		return nil, err
+	}
+	parser := proto.NewParser(bytes.NewBuffer(protoBuf))
+	
+	pb, err := parser.Parse()
+	if err != nil {
+		log.Errorf("err:%v", err)
+		return nil, err
+	}
+	
+	proto.Walk(
+		pb,
+		proto.WithMessage(p.AddMessage),
+		proto.WithEnum(p.AddEnum),
+		proto.WithPackage(p.AddPackage),
+		proto.WithService(p.AddService),
+		proto.WithOption(func(option *proto.Option) {
+			switch option.Name {
+			case "go_package":
+				p.GoPackagePath = option.Constant.Source
+				p.PackageDirPath = strings.TrimPrefix(p.GoPackagePath, BaseModPath)
+			}
+		}),
+	)
+	
+	protoMap[name] = p
+	return p, nil
 }
 
 func (p *Proto) AddMessage(message *proto.Message) {
@@ -121,7 +164,7 @@ func NewProtoMessage(message *proto.Message) *ProtoMessage {
 		FieldMap: map[string]*ProtoFiled{},
 		Comment:  NewCommentTag(message.Comment),
 	}
-
+	
 	parent := message.Parent
 	if parent != nil {
 		switch x := parent.(type) {
@@ -134,12 +177,12 @@ func NewProtoMessage(message *proto.Message) *ProtoMessage {
 			log.Warnf("unknown %v", reflect.TypeOf(message.Parent).Elem())
 		}
 	}
-
+	
 	for _, element := range message.Elements {
 		filed := NewProtoFiled(element)
 		p.FieldMap[filed.Name] = filed
 	}
-
+	
 	return p
 }
 
@@ -148,30 +191,30 @@ func NewCommentTag(comment *proto.Comment) *ProtoCommentTag {
 		comment: comment,
 		TagMap:  map[string][]string{},
 	}
-
+	
 	if comment != nil {
 		for _, line := range comment.Lines {
 			line := strings.TrimSpace(line)
 			if !strings.HasPrefix(line, "@") {
 				continue
 			}
-
+			
 			line = strings.TrimPrefix(line, "@")
-
+			
 			idx := strings.Index(line, ":")
 			if idx < 0 {
 				continue
 			}
-
+			
 			tag := line[:idx]
 			if _, ok := p.TagMap[tag]; !ok {
 				p.TagMap[tag] = []string{}
 			}
-
+			
 			p.TagMap[tag] = append(p.TagMap[tag], line[idx+1:])
 		}
 	}
-
+	
 	return p
 }
 
@@ -188,7 +231,7 @@ func (p *ProtoCommentTag) Get(key string) map[string]string {
 			m[item] = ""
 			return
 		}
-
+		
 		m[item[:idx]] = item[idx+1:]
 	})
 	return m
@@ -211,7 +254,7 @@ func NewProtoFiled(filed proto.Visitee) *ProtoFiled {
 	p := &ProtoFiled{
 		source: filed,
 	}
-
+	
 	switch x := filed.(type) {
 	case *proto.Message:
 		// m := NewProtoMessage(x)
@@ -241,7 +284,7 @@ func NewProtoFiled(filed proto.Visitee) *ProtoFiled {
 	default:
 		log.Warnf("unknown %v", reflect.TypeOf(filed).Elem())
 	}
-
+	
 	return p
 }
 
@@ -252,7 +295,7 @@ func NewProtoEnum(enum *proto.Enum) *ProtoEnum {
 		Comment:  NewCommentTag(enum.Comment),
 		FieldMap: map[string]*ProtoEnumField{},
 	}
-
+	
 	parent := enum.Parent
 	switch x := parent.(type) {
 	case *proto.Proto:
@@ -263,7 +306,7 @@ func NewProtoEnum(enum *proto.Enum) *ProtoEnum {
 	default:
 		log.Warnf("unknown %v", reflect.TypeOf(parent).Elem())
 	}
-
+	
 	for _, element := range enum.Elements {
 		switch x := element.(type) {
 		case *proto.EnumField:
@@ -273,7 +316,7 @@ func NewProtoEnum(enum *proto.Enum) *ProtoEnum {
 			log.Warnf("unknown %v", reflect.TypeOf(element).Elem())
 		}
 	}
-
+	
 	return p
 }
 
@@ -285,7 +328,7 @@ func NewProtoEnumField(field *proto.EnumField) *ProtoEnumField {
 		Comment:       NewCommentTag(field.Comment),
 		InlineComment: NewCommentTag(field.InlineComment),
 	}
-
+	
 	return p
 }
 
@@ -296,7 +339,7 @@ func NewProtoPackage(pkg *proto.Package) *ProtoPackage {
 		Comment:       NewCommentTag(pkg.Comment),
 		InlineComment: NewCommentTag(pkg.InlineComment),
 	}
-
+	
 	return p
 }
 
@@ -307,7 +350,7 @@ func NewProtoService(service *proto.Service) *ProtoService {
 		Comment: NewCommentTag(service.Comment),
 		RpcMap:  map[string]*ProtoRPC{},
 	}
-
+	
 	for _, element := range service.Elements {
 		switch x := element.(type) {
 		case *proto.RPC:
@@ -316,7 +359,7 @@ func NewProtoService(service *proto.Service) *ProtoService {
 			log.Warnf("unknown %v", reflect.TypeOf(element).Elem())
 		}
 	}
-
+	
 	return p
 }
 
@@ -327,33 +370,6 @@ func NewProtoRPC(rpc *proto.RPC) *ProtoRPC {
 		RequestType:  rpc.RequestType,
 		ResponseType: rpc.ReturnsType,
 	}
-
+	
 	return p
-}
-
-func ParseProto4Server(name string) error {
-	protoBuf, err := utils.FileRead(filepath.Join(ProtoDir(), name+".proto"))
-	if err != nil {
-		log.Errorf("err:%v", err)
-		return err
-	}
-	parser := proto.NewParser(bytes.NewBuffer(protoBuf))
-
-	pb, err := parser.Parse()
-	if err != nil {
-		log.Errorf("err:%v", err)
-		return err
-	}
-
-	p := NewProto()
-
-	proto.Walk(
-		pb,
-		proto.WithMessage(p.AddMessage),
-		proto.WithEnum(p.AddEnum),
-		proto.WithPackage(p.AddPackage),
-		proto.WithService(p.AddService),
-	)
-
-	return nil
 }

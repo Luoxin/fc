@@ -163,7 +163,9 @@ func (h *Handler) HandleFastHttp(ctx *fasthttp.RequestCtx) {
 	resp, err := func() (any, *Error) {
 		var callReq []reflect.Value
 		
-		callReq = append(callReq, reflect.ValueOf(&Ctx{}))
+		callReq = append(callReq, reflect.ValueOf(&Ctx{
+			source: ctx,
+		}))
 		
 		switch h.reqCnt {
 		case 2:
@@ -184,9 +186,6 @@ func (h *Handler) HandleFastHttp(ctx *fasthttp.RequestCtx) {
 		}
 		
 		ret := h.f.Call(callReq)
-		if len(ret) != 2 {
-			log.Panicf("num out not 2")
-		}
 		
 		switch h.rspCnt {
 		case 1:

@@ -6,10 +6,10 @@ require (
 	github.com/bytedance/sonic v1.5.0
 	github.com/darabuchi/log v0.0.0-20220923020052-f1a3dc411901
 	github.com/darabuchi/utils v0.0.0-20220920103146-54c894293b44
-	github.com/elliotchance/pie v1.39.0
 	github.com/elliotchance/pie/v2 v2.0.1
+	github.com/emicklei/proto v1.11.0
 	github.com/fasthttp/router v1.4.12
-	github.com/mcuadros/go-defaults v1.2.0
+	github.com/fsnotify/fsnotify v1.4.9
 	github.com/spf13/viper v1.4.0
 	github.com/valyala/fasthttp v1.40.0
 	go.uber.org/atomic v1.10.0
@@ -21,12 +21,9 @@ replace github.com/darabuchi/utils => ../utils
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
-	github.com/aofei/sandid v1.2.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20220526154910-8bf9453eb81a // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/coreos/go-systemd/v22 v22.3.2 // indirect
-	github.com/emicklei/proto v1.11.0 // indirect
-	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.11.0 // indirect

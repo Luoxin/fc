@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ext;
 
-option go_package = "us/ext";
+option go_package = "github.com/Luoxin/sexy/us/ext";
 
 message ExtReq {
 

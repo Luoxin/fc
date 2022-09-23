@@ -17,11 +17,19 @@ var service = NewService()
 
 func NewService() *fasthttp.Server {
 	return &fasthttp.Server{
-		Handler:                            handlerRouter.Handler,
-		ErrorHandler:                       nil,
-		HeaderReceived:                     nil,
+		Handler: handlerRouter.Handler,
+		ErrorHandler: func(ctx *fasthttp.RequestCtx, err error) {
+			log.Errorf("err:%v", err)
+		},
+		// HeaderReceived: func(header *fasthttp.RequestHeader) fasthttp.RequestConfig {
+		// 	return fasthttp.RequestConfig{
+		// 		ReadTimeout:        0,
+		// 		WriteTimeout:       0,
+		// 		MaxRequestBodySize: 0,
+		// 	}
+		// },
 		ContinueHandler:                    nil,
-		Name:                               "",
+		Name:                               honoka.ServiceName,
 		Concurrency:                        0,
 		ReadBufferSize:                     0,
 		WriteBufferSize:                    0,
@@ -34,8 +42,8 @@ func NewService() *fasthttp.Server {
 		TCPKeepalivePeriod:                 0,
 		MaxRequestBodySize:                 0,
 		DisableKeepalive:                   false,
-		TCPKeepalive:                       false,
-		ReduceMemoryUsage:                  false,
+		TCPKeepalive:                       true,
+		ReduceMemoryUsage:                  true,
 		GetOnly:                            false,
 		DisablePreParseMultipartForm:       false,
 		LogAllErrors:                       false,
@@ -46,8 +54,8 @@ func NewService() *fasthttp.Server {
 		NoDefaultDate:                      false,
 		NoDefaultContentType:               false,
 		KeepHijackedConns:                  false,
-		CloseOnShutdown:                    false,
-		StreamRequestBody:                  false,
+		CloseOnShutdown:                    true,
+		StreamRequestBody:                  true,
 		ConnState:                          nil,
 		Logger:                             log.Clone(),
 		TLSConfig:                          nil,

@@ -4,7 +4,7 @@ package nozomi;
 
 import "ext.proto";
 
-option go_package = "us/nozomi";
+option go_package = "github.com/Luoxin/sexy/us/nozomi";
 
 service nozomi {
 	// @desc: xxx
