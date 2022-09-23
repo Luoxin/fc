@@ -82,8 +82,10 @@ type (
 	}
 
 	ProtoRPC struct {
-		source  *proto.RPC
-		Comment *ProtoCommentTag
+		source       *proto.RPC
+		Comment      *ProtoCommentTag
+		RequestType  string
+		ResponseType string
 	}
 )
 
@@ -320,13 +322,11 @@ func NewProtoService(service *proto.Service) *ProtoService {
 
 func NewProtoRPC(rpc *proto.RPC) *ProtoRPC {
 	p := &ProtoRPC{
-		source:  rpc,
-		Comment: NewCommentTag(rpc.Comment),
+		source:       rpc,
+		Comment:      NewCommentTag(rpc.Comment),
+		RequestType:  rpc.RequestType,
+		ResponseType: rpc.ReturnsType,
 	}
-
-	log.Info(rpc.RequestType)
-	log.Info(rpc.ReturnsType)
-	log.Info(rpc.StreamsRequest)
 
 	return p
 }

@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"net"
-
-	"github.com/Luoxin/sexy/base/ext"
-	"github.com/Luoxin/sexy/base/nozomi"
+	
 	"github.com/Luoxin/sexy/honoka"
+	"github.com/Luoxin/sexy/us/ext"
+	"github.com/Luoxin/sexy/us/nozomi"
 	"github.com/darabuchi/log"
 	"github.com/darabuchi/utils"
 	"github.com/valyala/fasthttp"
@@ -61,7 +61,7 @@ func Listen(addr string) error {
 		log.Errorf("err:%v", err)
 		return err
 	}
-
+	
 	return nil
 }
 
@@ -71,28 +71,28 @@ func StartService() (err error) {
 		log.Errorf("err:%v", err)
 		return err
 	}
-
+	
 	// 添加系统级的接口
 	RegisterHandler(ApiHandler{Method: HEAD, Path: "_sys_/Echo", Handler: func(ctx *Ctx, req *ext.ExtReq) (*ext.ExtRsp, error) {
 		var rsp ext.ExtRsp
 		return &rsp, nil
 	}})
-
+	
 	// 监听端口，注册服务
-
+	
 	addr := fmt.Sprintf("%s:%d", honoka.BindIp, honoka.ConfigGet(honoka.ListenPort))
 	node := &nozomi.Node{
 		Address: fmt.Sprintf("http://%s", addr),
 		State:   0,
 	}
-
+	
 	err = nozomi.RegisterServer(node)
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return err
 	}
 	defer nozomi.UnregisterServer()
-
+	
 	go func() {
 		err = Listen(addr)
 		if err != nil {
@@ -107,9 +107,9 @@ func StartService() (err error) {
 			}
 		}()
 	}()
-
+	
 	<-utils.GetExitSign()
-
+	
 	return nil
 }
 

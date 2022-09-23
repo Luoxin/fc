@@ -130,6 +130,8 @@ github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ3
 github.com/crystal-construct/analytics v0.0.0-20160309172048-27445d731098/go.mod h1:e6rpblPhH+9Cb0s30UjF3pmP7FhUI19I6aPfz6rqIy4=
 github.com/darabuchi/log v0.0.0-20220726104220-e8c4cdea8d19 h1:yNWzXrWpEkG99jZ4R1AZUVI2udlMIWShpjpkMCWIKaQ=
 github.com/darabuchi/log v0.0.0-20220726104220-e8c4cdea8d19/go.mod h1:GYpkwvgHUgUGyMuIrvq8wK6KvtXR6Y+wbd8/UPIPaXI=
+github.com/darabuchi/log v0.0.0-20220923020052-f1a3dc411901 h1:OKiGJsnymtuy0+JVRGr7VnC/x3sa01iJfbIorDJzUiw=
+github.com/darabuchi/log v0.0.0-20220923020052-f1a3dc411901/go.mod h1:n+RFsoMIkQEReUIayRPXgNKI2xVS386ls4HwdjMcaLY=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -422,6 +424,8 @@ github.com/moznion/go-unicode-east-asian-width v0.0.0-20140622124307-0231aeb79f9
 github.com/mreiferson/go-options v1.0.0/go.mod h1:zHtCks/HQvOt8ATyfwVe3JJq2PPuImzXINPRTC03+9w=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
+github.com/nats-io/nuid v1.0.1 h1:5iA8DT8V7q8WK2EScv2padNa/rTESc1KdnPw4TC2paw=
+github.com/nats-io/nuid v1.0.1/go.mod h1:19wcPz3Ph3q0Jbyiqsd0kePYG7A95tJPxeL+1OSON2c=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nsqio/go-diskqueue v1.0.0/go.mod h1:INuJIxl4ayUsyoNtHL5+9MFPDfSZ0zY93hNY6vhBRsI=
 github.com/nsqio/go-nsq v1.0.8/go.mod h1:vKq36oyeVXgsS5Q8YEO7WghqidAVXQlcFxzQbQTuDEY=

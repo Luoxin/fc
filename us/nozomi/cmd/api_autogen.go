@@ -2,7 +2,7 @@
 package main
 
 import (
-	"github.com/Luoxin/sexy/base/rpc"
+	"github.com/Luoxin/sexy/us/rpc"
 )
 
 var apiList = []rpc.ApiHandler{}

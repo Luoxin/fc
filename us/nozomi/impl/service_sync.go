@@ -3,8 +3,8 @@ package impl
 import (
 	"os"
 	"path/filepath"
-
-	"github.com/Luoxin/sexy/base/nozomi"
+	
+	"github.com/Luoxin/sexy/us/nozomi"
 	"github.com/bytedance/sonic"
 	"github.com/darabuchi/log"
 	"github.com/darabuchi/utils"
@@ -13,7 +13,7 @@ import (
 
 func ServiceSync() error {
 	nozomi.GetService(nozomi.ServiceName)
-
+	
 	etcd.WatchPrefix("nozomi_server_cfg_", func(event etcd.Event) {
 		var service nozomi.Server
 		err := sonic.Unmarshal([]byte(event.Value), &service)
@@ -21,13 +21,13 @@ func ServiceSync() error {
 			log.Errorf("err:%v", err)
 			return
 		}
-
+		
 		if service.Name == "" {
 			return
 		}
-
+		
 		cf := nozomi.GenServerPath(service.Name)
-
+		
 		if !utils.IsDir(filepath.Dir(cf)) {
 			err = os.MkdirAll(filepath.Dir(cf), 0777)
 			if err != nil {
@@ -35,7 +35,7 @@ func ServiceSync() error {
 				return
 			}
 		}
-
+		
 		err = utils.FileWrite(cf, event.Value)
 		if err != nil {
 			log.Errorf("err:%v", err)
